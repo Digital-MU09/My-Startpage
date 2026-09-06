@@ -10,3 +10,5 @@ Note that most modern browsers like Chromium-based browsers and Gecko-based brow
 ## How to make your own version:
 
 If you want to change the wallpaper or edit the source code, feel free to fork this repository. Once you make your changes, you can host it yourself for free using GitHub Pages. If you aren't sure how to do that, you can check out the [GitHub Pages Quickstart Guide](https://docs.github.com/en/pages/quickstart).
+
+**Inspiration:** https://sijan-dev.github.io/starty/
