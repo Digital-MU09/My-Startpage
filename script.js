@@ -15,6 +15,27 @@ function updateClock() {
     document.getElementById("date").textContent = date.toUpperCase();
 }
 
+const quotes = [
+    "Hella search...",
+    "Search it, shaka brah...",
+    "I double dare you to search...",
+    "Release the Kraken...",
+    "What's the plan, Max?",
+    "Ready for the mosh pit, shaka brah...",
+    "Find something hella cool...",
+    "Let's get hella crazy...",
+    "No emoji!",
+    "Step-douches beware...",
+    "Bite me, search engine."
+];
+
+const searchInput = document.getElementById("search-input");
+let quoteIndex = Number(localStorage.getItem("quoteIndex")) || 0;
+
+searchInput.placeholder = quotes[quoteIndex];
+localStorage.setItem("quoteIndex", (quoteIndex + 1) % quotes.length);
+searchInput.focus();
+
 document.getElementById("search-form").addEventListener("submit", function (event) {
     event.preventDefault();
     const query = document.getElementById("search-input").value.trim();
