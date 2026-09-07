@@ -71,35 +71,38 @@ body {
 .shortcuts {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
+    gap: 8px;
 }
 
 .shortcut {
-    min-height: 82px;
+    min-height: 64px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    gap: 9px;
-    padding: 12px 8px;
-    border: 1px solid rgba(255, 255, 255, 0.17);
-    border-radius: 14px;
+    gap: 5px;
+    padding: 8px 6px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
     color: white;
     text-decoration: none;
-    font-size: 0.78rem;
+    font-size: 0.68rem;
     background: rgba(20, 20, 20, 0.42);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
     backdrop-filter: blur(12px);
-    transition: background 0.2s, transform 0.2s;
+    transition: transform 0.2s ease, background 0.2s ease;
 }
 
 .shortcut:hover {
-    background: rgba(255, 255, 255, 0.16);
-    transform: translateY(-3px);
+    background: rgba(20, 20, 20, 0.58);
+    transform: translateY(-2px);
 }
 
-.shortcut i {
-    font-size: 1.5rem;
+.shortcut i,
+.shortcut svg {
+    width: 1.15rem;
+    height: 1.15rem;
+    font-size: 1.15rem;
 }
 
 @media (max-width: 600px) {
