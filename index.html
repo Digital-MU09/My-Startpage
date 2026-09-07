@@ -19,68 +19,21 @@
             <input id="search-input" type="search" placeholder="Search Google..." autocomplete="off" autofocus>
         </form>
 
-        <div class="shortcuts">
-            <a href="https://www.youtube.com" class="shortcut" target="_blank" rel="noopener">
-                <i class="fa-brands fa-youtube"></i>
-                <span>YouTube</span>
-            </a>
-            <a href="https://www.facebook.com" class="shortcut" target="_blank" rel="noopener">
-                <i class="fa-brands fa-facebook"></i>
-                <span>Facebook</span>
-            </a>
-            <a href="https://www.instagram.com" class="shortcut" target="_blank" rel="noopener">
-                <i class="fa-brands fa-instagram"></i>
-                <span>Instagram</span>
-            </a>
-            <a href="https://www.pinterest.com" class="shortcut" target="_blank" rel="noopener">
-                <i class="fa-brands fa-pinterest"></i>
-                <span>Pinterest</span>
-            </a>
-            <a href="https://www.reddit.com" class="shortcut" target="_blank" rel="noopener">
-                <i class="fa-brands fa-reddit"></i>
-                <span>Reddit</span>
-            </a>
-            <a href="https://x.com" class="shortcut" target="_blank" rel="noopener">
-                <i class="fa-brands fa-x-twitter"></i>
-                <span>X (Twitter)</span>
-            </a>
-            <a href="https://chatgpt.com" class="shortcut" target="_blank" rel="noopener">
-                <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-                    <rect x="5" y="7" width="14" height="12" rx="3" fill="currentColor"></rect>
-                    <circle cx="9" cy="12" r="1" fill="#222"></circle>
-                    <circle cx="15" cy="12" r="1" fill="#222"></circle>
-                    <path d="M9 16h6M12 7V4M9 4h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"></path>
-                </svg>
-                <span>ChatGPT</span>
-            </a>
-            <a href="https://gemini.google.com" class="shortcut" target="_blank" rel="noopener">
-                <i class="fa-brands fa-google"></i>
-                <span>Gemini</span>
-            </a>
-            <a href="https://mail.google.com" class="shortcut" target="_blank" rel="noopener">
-                <i class="fa-solid fa-envelope"></i>
-                <span>Gmail</span>
-            </a>
-            <a href="https://chromewebstore.google.com" class="shortcut" target="_blank" rel="noopener">
-                <i class="fa-brands fa-chrome"></i>
-                <span>Chrome Web Store</span>
-            </a>
-            <a href="https://github.com" class="shortcut" target="_blank" rel="noopener">
-                <i class="fa-brands fa-github"></i>
-                <span>GitHub</span>
-            </a>
-            <a href="https://www.4chan.org" class="shortcut" target="_blank" rel="noopener">
-                <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-                    <circle cx="12" cy="8" r="4" fill="currentColor"></circle>
-                    <circle cx="8" cy="13" r="4" fill="currentColor"></circle>
-                    <circle cx="16" cy="13" r="4" fill="currentColor"></circle>
-                    <circle cx="12" cy="16" r="4" fill="currentColor"></circle>
-                    <circle cx="12" cy="12" r="2" fill="#222"></circle>
-                </svg>
-                <span>4chan</span>
-            </a>
-        </div>
+        <div id="shortcuts-grid"></div>
     </main>
+
+    <dialog id="edit-modal">
+        <h2>Edit shortcut</h2>
+        <label for="shortcut-name">Name</label>
+        <input id="shortcut-name" type="text">
+        <label for="shortcut-url">URL</label>
+        <input id="shortcut-url" type="text">
+        <div class="modal-buttons">
+            <button id="cancel-edit" type="button">Cancel</button>
+            <button id="save-edit" type="button">Save</button>
+        </div>
+    </dialog>
+
     <script src="script.js"></script>
 </body>
 </html>
