@@ -72,8 +72,7 @@ function renderShortcuts() {
         const link = document.createElement("a");
         link.className = "shortcut-link";
         link.href = shortcut.url;
-        link.target = "_blank";
-        link.rel = "noopener";
+        link.target = "_self";
 
         const icon = document.createElement("img");
         icon.className = "shortcut-icon";
