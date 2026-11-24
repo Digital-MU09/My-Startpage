@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hella New Tab</title>
+    <link rel="preload" as="image" href="background.webp" type="image/webp">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body>
     <header class="clock">
@@ -15,7 +15,10 @@
 
     <main class="container">
         <form id="search-form" class="search-box">
-            <i class="fa-solid fa-magnifying-glass"></i>
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="7"></circle>
+                <line x1="16.5" y1="16.5" x2="21" y2="21"></line>
+            </svg>
             <input id="search-input" type="search" placeholder="Search Google..." autocomplete="off" autofocus>
         </form>
 

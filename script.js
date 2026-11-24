@@ -44,14 +44,49 @@ const defaultShortcuts = [
     { name: "4chan", url: "https://www.4chan.org" }
 ];
 
+function storageGet(key) {
+    try {
+        return localStorage.getItem(key);
+    } catch (error) {
+        return null;
+    }
+}
+
+function storageSet(key, value) {
+    try {
+        localStorage.setItem(key, value);
+    } catch (error) {
+        // Storage blocked or full: the page still works, changes just won't persist.
+    }
+}
+
+function loadShortcuts() {
+    try {
+        const data = JSON.parse(storageGet("shortcuts"));
+
+        if (!Array.isArray(data)) {
+            return defaultShortcuts;
+        }
+
+        const valid = data.filter(function (item) {
+            return item && typeof item.name === "string" && typeof item.url === "string";
+        });
+
+        return valid.length > 0 ? valid : defaultShortcuts;
+    } catch (error) {
+        return defaultShortcuts;
+    }
+}
+
 const searchInput = document.getElementById("search-input");
-let quoteIndex = Number(localStorage.getItem("quoteIndex")) || 0;
+const savedQuoteIndex = Number(storageGet("quoteIndex")) || 0;
+const quoteIndex = savedQuoteIndex % quotes.length;
 
 searchInput.placeholder = quotes[quoteIndex];
-localStorage.setItem("quoteIndex", (quoteIndex + 1) % quotes.length);
+storageSet("quoteIndex", (quoteIndex + 1) % quotes.length);
 searchInput.focus();
 
-let shortcuts = JSON.parse(localStorage.getItem("shortcuts")) || defaultShortcuts;
+let shortcuts = loadShortcuts();
 const shortcutsGrid = document.getElementById("shortcuts-grid");
 const editModal = document.getElementById("edit-modal");
 const shortcutNameInput = document.getElementById("shortcut-name");
@@ -59,7 +94,35 @@ const shortcutUrlInput = document.getElementById("shortcut-url");
 let editingIndex = null;
 
 function getHostname(url) {
-    return new URL(url).hostname;
+    try {
+        return new URL(url).hostname;
+    } catch (error) {
+        return "";
+    }
+}
+
+function createFallbackIcon(name) {
+    const fallback = document.createElement("span");
+    fallback.className = "shortcut-icon shortcut-icon-fallback";
+    fallback.textContent = (name.trim().charAt(0) || "?").toUpperCase();
+    return fallback;
+}
+
+function createIcon(shortcut) {
+    const hostname = getHostname(shortcut.url);
+
+    if (!hostname) {
+        return createFallbackIcon(shortcut.name);
+    }
+
+    const icon = document.createElement("img");
+    icon.className = "shortcut-icon";
+    icon.src = "https://icon.horse/icon/" + hostname;
+    icon.alt = "";
+    icon.addEventListener("error", function () {
+        icon.replaceWith(createFallbackIcon(shortcut.name));
+    });
+    return icon;
 }
 
 function renderShortcuts() {
@@ -74,10 +137,7 @@ function renderShortcuts() {
         link.href = shortcut.url;
         link.target = "_self";
 
-        const icon = document.createElement("img");
-        icon.className = "shortcut-icon";
-        icon.src = "https://icon.horse/icon/" + getHostname(shortcut.url);
-        icon.alt = "";
+        const icon = createIcon(shortcut);
 
         const name = document.createElement("span");
         name.textContent = shortcut.name;
@@ -90,6 +150,7 @@ function renderShortcuts() {
         editButton.type = "button";
         editButton.textContent = "⋮";
         editButton.title = "Edit shortcut";
+        editButton.setAttribute("aria-label", "Edit " + shortcut.name);
         editButton.addEventListener("click", function () {
             editingIndex = index;
             shortcutNameInput.value = shortcut.name;
@@ -130,7 +191,7 @@ document.getElementById("save-edit").addEventListener("click", function () {
         name: newName,
         url: newUrl
     };
-    localStorage.setItem("shortcuts", JSON.stringify(shortcuts));
+    storageSet("shortcuts", JSON.stringify(shortcuts));
     renderShortcuts();
     editModal.close();
 });
