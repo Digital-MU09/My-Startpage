@@ -4,37 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hella New Tab</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%99%3C/text%3E%3C/svg%3E">
     <link rel="preload" as="image" href="background.webp" type="image/webp">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header class="clock">
-        <div id="time">08:46 PM</div>
-        <div id="date">SATURDAY, AUGUST 1</div>
+        <div id="time"></div>
+        <div id="date"></div>
     </header>
 
     <main class="container">
-        <form id="search-form" class="search-box">
+        <form id="search-form" class="search-box" role="search">
             <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <circle cx="11" cy="11" r="7"></circle>
                 <line x1="16.5" y1="16.5" x2="21" y2="21"></line>
             </svg>
-            <input id="search-input" type="search" placeholder="Search Google..." autocomplete="off" autofocus>
+            <input id="search-input" type="search" placeholder="Search Google..." aria-label="Search Google" autocomplete="off" autofocus>
         </form>
 
         <div id="shortcuts-grid"></div>
+
+        <button id="reset-shortcuts" class="reset-shortcuts" type="button">Reset to defaults</button>
     </main>
 
-    <dialog id="edit-modal">
-        <h2>Edit shortcut</h2>
-        <label for="shortcut-name">Name</label>
-        <input id="shortcut-name" type="text">
-        <label for="shortcut-url">URL</label>
-        <input id="shortcut-url" type="text">
-        <div class="modal-buttons">
-            <button id="cancel-edit" type="button">Cancel</button>
-            <button id="save-edit" type="button">Save</button>
-        </div>
+    <dialog id="edit-modal" aria-labelledby="dialog-title">
+        <form id="shortcut-form" method="dialog">
+            <h2 id="dialog-title">Edit shortcut</h2>
+            <label for="shortcut-name">Name</label>
+            <input id="shortcut-name" type="text" maxlength="40" autocomplete="off">
+            <label for="shortcut-url">URL</label>
+            <input id="shortcut-url" type="text" inputmode="url" autocomplete="off" spellcheck="false">
+            <p id="form-error" class="form-error" role="alert" hidden></p>
+            <div class="modal-buttons">
+                <button id="delete-shortcut" type="button">Delete</button>
+                <button id="cancel-edit" type="button">Cancel</button>
+                <button id="save-edit" type="submit">Save</button>
+            </div>
+        </form>
     </dialog>
 
     <script src="script.js"></script>

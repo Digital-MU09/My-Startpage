@@ -44,6 +44,8 @@ const defaultShortcuts = [
     { name: "4chan", url: "https://www.4chan.org" }
 ];
 
+const MAX_SHORTCUTS = 24;
+
 function storageGet(key) {
     try {
         return localStorage.getItem(key);
@@ -60,22 +62,45 @@ function storageSet(key, value) {
     }
 }
 
+function storageRemove(key) {
+    try {
+        localStorage.removeItem(key);
+    } catch (error) {
+        // Nothing to do if storage is blocked.
+    }
+}
+
+function cloneDefaults() {
+    return defaultShortcuts.map(function (shortcut) {
+        return { name: shortcut.name, url: shortcut.url };
+    });
+}
+
 function loadShortcuts() {
     try {
         const data = JSON.parse(storageGet("shortcuts"));
 
         if (!Array.isArray(data)) {
-            return defaultShortcuts;
+            return cloneDefaults();
+        }
+
+        // An empty list is valid: the user deleted every shortcut on purpose.
+        if (data.length === 0) {
+            return [];
         }
 
         const valid = data.filter(function (item) {
             return item && typeof item.name === "string" && typeof item.url === "string";
         });
 
-        return valid.length > 0 ? valid : defaultShortcuts;
+        return valid.length > 0 ? valid : cloneDefaults();
     } catch (error) {
-        return defaultShortcuts;
+        return cloneDefaults();
     }
+}
+
+function saveShortcuts() {
+    storageSet("shortcuts", JSON.stringify(shortcuts));
 }
 
 const searchInput = document.getElementById("search-input");
@@ -89,9 +114,40 @@ searchInput.focus();
 let shortcuts = loadShortcuts();
 const shortcutsGrid = document.getElementById("shortcuts-grid");
 const editModal = document.getElementById("edit-modal");
+const shortcutForm = document.getElementById("shortcut-form");
+const dialogTitle = document.getElementById("dialog-title");
 const shortcutNameInput = document.getElementById("shortcut-name");
 const shortcutUrlInput = document.getElementById("shortcut-url");
-let editingIndex = null;
+const formError = document.getElementById("form-error");
+const deleteButton = document.getElementById("delete-shortcut");
+const resetButton = document.getElementById("reset-shortcuts");
+let editingIndex = null; // null means "adding a new shortcut"
+
+// A button that needs a second click within 3 seconds to confirm (no alert/confirm popups).
+function setupConfirmButton(button, idleLabel, armedLabel, onConfirm) {
+    let timer = null;
+
+    function disarm() {
+        clearTimeout(timer);
+        timer = null;
+        button.textContent = idleLabel;
+        button.classList.remove("armed");
+    }
+
+    button.addEventListener("click", function () {
+        if (timer === null) {
+            button.textContent = armedLabel;
+            button.classList.add("armed");
+            timer = setTimeout(disarm, 3000);
+            return;
+        }
+
+        disarm();
+        onConfirm();
+    });
+
+    return disarm;
+}
 
 function getHostname(url) {
     try {
@@ -101,10 +157,10 @@ function getHostname(url) {
     }
 }
 
-function createFallbackIcon(name) {
+function createFallbackIcon(text) {
     const fallback = document.createElement("span");
     fallback.className = "shortcut-icon shortcut-icon-fallback";
-    fallback.textContent = (name.trim().charAt(0) || "?").toUpperCase();
+    fallback.textContent = (text.trim().charAt(0) || "?").toUpperCase();
     return fallback;
 }
 
@@ -123,6 +179,29 @@ function createIcon(shortcut) {
         icon.replaceWith(createFallbackIcon(shortcut.name));
     });
     return icon;
+}
+
+function showError(message) {
+    formError.textContent = message;
+    formError.hidden = false;
+}
+
+function hideError() {
+    formError.textContent = "";
+    formError.hidden = true;
+}
+
+function openShortcutDialog(index) {
+    const isEditing = index !== null;
+
+    editingIndex = index;
+    dialogTitle.textContent = isEditing ? "Edit shortcut" : "Add shortcut";
+    shortcutNameInput.value = isEditing ? shortcuts[index].name : "";
+    shortcutUrlInput.value = isEditing ? shortcuts[index].url : "";
+    deleteButton.hidden = !isEditing;
+    disarmDelete();
+    hideError();
+    editModal.showModal();
 }
 
 function renderShortcuts() {
@@ -152,46 +231,110 @@ function renderShortcuts() {
         editButton.title = "Edit shortcut";
         editButton.setAttribute("aria-label", "Edit " + shortcut.name);
         editButton.addEventListener("click", function () {
-            editingIndex = index;
-            shortcutNameInput.value = shortcut.name;
-            shortcutUrlInput.value = shortcut.url;
-            editModal.showModal();
+            openShortcutDialog(index);
         });
 
         tile.appendChild(link);
         tile.appendChild(editButton);
         shortcutsGrid.appendChild(tile);
     });
+
+    if (shortcuts.length < MAX_SHORTCUTS) {
+        const tile = document.createElement("div");
+        tile.className = "shortcut shortcut-add";
+
+        const addButton = document.createElement("button");
+        addButton.className = "shortcut-link";
+        addButton.type = "button";
+        addButton.setAttribute("aria-label", "Add shortcut");
+        addButton.addEventListener("click", function () {
+            openShortcutDialog(null);
+        });
+
+        const plus = createFallbackIcon("+");
+        const label = document.createElement("span");
+        label.textContent = "Add";
+
+        addButton.appendChild(plus);
+        addButton.appendChild(label);
+        tile.appendChild(addButton);
+        shortcutsGrid.appendChild(tile);
+    }
 }
+
+const disarmDelete = setupConfirmButton(deleteButton, "Delete", "Click again to delete", function () {
+    if (editingIndex === null) {
+        return;
+    }
+
+    shortcuts.splice(editingIndex, 1);
+    saveShortcuts();
+    renderShortcuts();
+    editModal.close();
+});
+
+setupConfirmButton(resetButton, "Reset to defaults", "Click again to reset", function () {
+    shortcuts = cloneDefaults();
+    storageRemove("shortcuts");
+    renderShortcuts();
+});
 
 document.getElementById("cancel-edit").addEventListener("click", function () {
     editModal.close();
 });
 
-document.getElementById("save-edit").addEventListener("click", function () {
+// Clicking the dark area outside the dialog closes it.
+editModal.addEventListener("click", function (event) {
+    if (event.target !== editModal) {
+        return;
+    }
+
+    const rect = editModal.getBoundingClientRect();
+    const inside = event.clientX >= rect.left && event.clientX <= rect.right &&
+        event.clientY >= rect.top && event.clientY <= rect.bottom;
+
+    if (!inside) {
+        editModal.close();
+    }
+});
+
+// The form submits on Enter or on the Save button.
+shortcutForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+
     const newName = shortcutNameInput.value.trim();
     let newUrl = shortcutUrlInput.value.trim();
 
     if (!newName || !newUrl) {
+        showError("Please enter both a name and a URL.");
         return;
     }
 
-    if (!newUrl.startsWith("http://") && !newUrl.startsWith("https://")) {
+    if (!/^https?:\/\//i.test(newUrl)) {
         newUrl = "https://" + newUrl;
     }
 
     try {
         new URL(newUrl);
     } catch (error) {
-        alert("Please enter a valid URL.");
+        showError("Please enter a valid URL.");
         return;
     }
 
-    shortcuts[editingIndex] = {
-        name: newName,
-        url: newUrl
-    };
-    storageSet("shortcuts", JSON.stringify(shortcuts));
+    const shortcut = { name: newName, url: newUrl };
+
+    if (editingIndex === null) {
+        if (shortcuts.length >= MAX_SHORTCUTS) {
+            showError("You can have up to " + MAX_SHORTCUTS + " shortcuts.");
+            return;
+        }
+
+        shortcuts.push(shortcut);
+    } else {
+        shortcuts[editingIndex] = shortcut;
+    }
+
+    saveShortcuts();
     renderShortcuts();
     editModal.close();
 });
