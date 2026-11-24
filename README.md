@@ -1,15 +1,25 @@
-## How to use my startpage:
+**Live demo:** https://digital-mu09.github.io/My-Startpage/
 
-If you want to use this exactly as it is, just set your browser's home page to my repo's link.
+## How to use my startpage
 
-Note that most modern browsers like Chromium-based browsers and Gecko-based browsers will not automatically load a custom page when you open a new tab. To fix this, you will need an add-on to force the new tab to use the link:
+If you want to use it exactly as it is, just set your browser's home page to the live demo link above.
 
-* **For Chromium:** Use [Custom New Tab URL](https://microsoftedge.microsoft.com/addons/detail/custom-new-tab-url/oeibmbobgpgnbnlbaffdgebpeepfbnhi?hl=en-US)
-* **For Gecko:** Use [New Tab Override](https://addons.mozilla.org/en-US/firefox/addon/new-tab-override/)
+Most modern browsers, including Chromium-based and Gecko-based browsers, don't automatically load a custom page when you open a new tab. To get around this, you'll need an extension that lets you set your own new tab page.
 
-## How to make your own version:
+- **For Chromium:** [Custom New Tab URL](https://microsoftedge.microsoft.com/addons/detail/custom-new-tab-url/oeibmbobgpgnbnlbaffdgebpeepfbnhi?hl=en-US)
+- **For Gecko:** [New Tab Override](https://addons.mozilla.org/en-US/firefox/addon/new-tab-override/)
 
-If you want to change the wallpaper or edit the source code, feel free to fork this repository. Once you make your changes, you can host it yourself for free using GitHub Pages. If you aren't sure how to do that, you can check out the [GitHub Pages Quickstart Guide](https://docs.github.com/en/pages/quickstart).
+## Making your own version
 
-## Inspiration:
-https://sijan-dev.github.io/starty/
+Feel free to fork this repository and make it your own. You can change the wallpaper, customize the shortcuts, or edit the source code however you like.
+
+Once you're happy with your changes, you can host your version for free using GitHub Pages. The [GitHub Pages Quickstart Guide](https://docs.github.com/en/pages/quickstart) is a good place to start.
+
+## Inspiration and credits
+
+- Inspired by [Starty](https://sijan-dev.github.io/starty/).
+- Website icons are provided by [icon.horse](https://icon.horse). If an icon can't be loaded, a letter is displayed instead.
+
+## License
+
+[MIT](LICENSE)
